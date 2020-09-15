@@ -2,24 +2,32 @@ function calc (num1: number, mod: number, num2: number) {
     basic.clearScreen()
     show_mod(-1)
     if (mod == 0) {
-        basic.showNumber(0 + 0)
+        basic.showNumber(num1 + num2)
+        return num1 + num2
     } else if (mod == 1) {
-        basic.showNumber(0 - 0)
+        basic.showNumber(num1 - num2)
+        return num1 - num2
     } else if (mod == 2) {
-        basic.showNumber(0 * 0)
+        basic.showNumber(num1 * num2)
+        return num1 * num2
     } else if (mod == 3) {
-        basic.showNumber(0 / 0)
+        basic.showNumber(num1 / num2)
+        return num1 / num2
     } else if (mod == 4) {
-        basic.showNumber(0 ** 0)
+        basic.showNumber(num1 ** num2)
+        return num1 ** num2
     } else if (mod == 5) {
-        basic.showNumber(Math.sqrt(0))
+        basic.showNumber(num1 * Math.sqrt(num2))
+        numA = num1 * Math.sqrt(0)
     } else {
-    	
+        show("err")
+        return 0
     }
+    tracker = 1
 }
-function show_mod (num: number) {
+function show_mod (mod: number) {
     basic.clearScreen()
-    if (num == 0) {
+    if (mod == 0) {
         basic.showLeds(`
             . . # . .
             . . # . .
@@ -27,7 +35,7 @@ function show_mod (num: number) {
             . . # . .
             . . # . .
             `)
-    } else if (num == 1) {
+    } else if (mod == 1) {
         basic.showLeds(`
             . . . . .
             . . . . .
@@ -35,7 +43,7 @@ function show_mod (num: number) {
             . . . . .
             . . . . .
             `)
-    } else if (num == 2) {
+    } else if (mod == 2) {
         basic.showLeds(`
             # . . . #
             . # . # .
@@ -43,7 +51,7 @@ function show_mod (num: number) {
             . # . # .
             # . . . #
             `)
-    } else if (num == 3) {
+    } else if (mod == 3) {
         basic.showLeds(`
             . . # . .
             . . # . .
@@ -51,7 +59,7 @@ function show_mod (num: number) {
             . . # . .
             . . # . .
             `)
-    } else if (num == 4) {
+    } else if (mod == 4) {
         basic.showLeds(`
             . . . . .
             . . # . .
@@ -59,7 +67,7 @@ function show_mod (num: number) {
             # . . . #
             . . . . .
             `)
-    } else if (num == 5) {
+    } else if (mod == 5) {
         images.createBigImage(`
             . . . # # # # # # #
             . . # . . . . . . #
@@ -85,12 +93,20 @@ input.onButtonPressed(Button.A, function () {
             numA = -1 * maxNum
         }
         basic.showNumber(numA)
-    } else {
+    } else if (tracker == 1) {
         MOD += 1
         if (MOD > maxMod) {
             MOD = 0
         }
         show_mod(MOD)
+    } else if (tracker == 2) {
+        numB += 1
+        if (numB > maxNum) {
+            numB = -1 * maxNum
+        }
+        basic.showNumber(numB)
+    } else {
+        show("err")
     }
 })
 input.onButtonPressed(Button.AB, function () {
@@ -98,9 +114,14 @@ input.onButtonPressed(Button.AB, function () {
     if (tracker == 0) {
         tracker = 1
         show_mod(MOD)
-    } else {
+    } else if (tracker == 1) {
+        tracker = 2
+        basic.showNumber(numB)
+    } else if (tracker == 2) {
         tracker = 0
-        basic.showNumber(numA)
+        calc(numA, MOD, numB)
+    } else {
+        show("err")
     }
 })
 input.onButtonPressed(Button.B, function () {
@@ -111,14 +132,38 @@ input.onButtonPressed(Button.B, function () {
             numA = maxNum
         }
         basic.showNumber(numA)
-    } else {
+    } else if (tracker == 1) {
         MOD += -1
         if (MOD < 0) {
             MOD = maxMod
         }
         show_mod(MOD)
+    } else if (tracker == 2) {
+        numB += -1
+        if (numB < -1 * maxNum) {
+            numB = maxNum
+        }
+        basic.showNumber(numB)
+    } else {
+        show("err")
     }
 })
+function show (input2: string) {
+    if (input2 == "err") {
+        images.createBigImage(`
+            # # . # # # . # # #
+            # . . # . # . # . #
+            # # . # # . . # # .
+            # . . # . # . # . #
+            # # . # . # . # . #
+            `).showImage(0)
+    } else if (input2 == "abcd") {
+    	
+    } else {
+    	
+    }
+}
+let numB = 0
 let MOD = 0
 let numA = 0
 let maxMod = 0
